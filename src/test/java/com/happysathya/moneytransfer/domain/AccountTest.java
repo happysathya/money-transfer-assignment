@@ -1,6 +1,7 @@
-package com.happysathya.moneytransfer;
+package com.happysathya.moneytransfer.domain;
 
-import com.happysathya.moneytransfer.Account.AccountBuilder;
+import com.happysathya.moneytransfer.domain.Account;
+import com.happysathya.moneytransfer.domain.Account.AccountBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

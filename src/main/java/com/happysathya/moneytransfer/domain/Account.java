@@ -1,4 +1,4 @@
-package com.happysathya.moneytransfer;
+package com.happysathya.moneytransfer.domain;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -57,18 +57,19 @@ public class Account {
         }
     }
 
-    public void depositAmount(BigDecimal amount) {
+    public BigDecimal depositAmount(BigDecimal amount) {
         validatePositiveAmount(amount);
         try {
             reentrantLock.lock();
             logEvent("DEPOSIT", this, amount);
             balance = getBalance().add(amount);
+            return balance;
         } finally {
             reentrantLock.unlock();
         }
     }
 
-    public void withdrawAmount(BigDecimal amount) {
+    public BigDecimal withdrawAmount(BigDecimal amount) {
         validatePositiveAmount(amount);
         try {
             reentrantLock.lock();
@@ -76,6 +77,7 @@ public class Account {
                 throw new IllegalStateException(String.format("Withdrawal amount %s is greater than balance %s", rounded(amount), rounded(balance)));
             logEvent("WITHDRAW", this, amount);
             balance = getBalance().subtract(amount);
+            return balance;
         } finally {
             reentrantLock.unlock();
         }
