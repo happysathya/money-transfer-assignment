@@ -20,6 +20,6 @@ The application runs on http://localhost:7000/
 
 The REST api collection can be found here: https://documenter.getpostman.com/view/2226034/SW7XbVaX?version=latest
 
-##### PS: Unit tests are self explanatory including concurrent access.
+##### PS: Unit tests are self explanatory including concurrent access tests.
 
 
