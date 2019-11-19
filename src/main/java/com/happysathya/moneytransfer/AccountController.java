@@ -37,7 +37,7 @@ public class AccountController {
     }
 
     private AccountResponse mapToAccountResponse(Account account) {
-        return new AccountResponse(account.getAccountId(),
+        return new AccountResponse(account.getAccountId().toString(),
                 account.getAccountHolderName(),
                 account.getBalance());
     }
@@ -62,7 +62,7 @@ public class AccountController {
     }
 
     public void depositAmount(Context context) {
-        try {
+        handle(() -> {
             String accountId = context.pathParam("accountId");
             findAccount(accountId)
                     .ifPresentOrElse(account -> {
@@ -70,13 +70,11 @@ public class AccountController {
                         account.depositAmount(depositRequest.getAmount());
                         context.json(mapToAccountResponse(account));
                     }, () -> context.status(404));
-        } catch (RuntimeException ex) {
-            context.json(new ErrorResponse(ex.getMessage()));
-        }
+        }, context);
     }
 
     public void transferAmount(Context context) {
-        try {
+        handle(() -> {
             String accountId = context.pathParam("accountId");
             findAccount(accountId)
                     .ifPresentOrElse(account -> {
@@ -88,14 +86,11 @@ public class AccountController {
                                     context.json(account);
                                 }, () -> context.status(404));
                     }, () -> context.status(404));
-        } catch (RuntimeException ex) {
-            logException(ex);
-            context.json(new ErrorResponse(ex.getMessage()));
-        }
+        }, context);
     }
 
     public void withdrawAmount(Context context) {
-        try {
+        handle(() -> {
             String accountId = context.pathParam("accountId");
             findAccount(accountId)
                     .ifPresentOrElse(account -> {
@@ -103,9 +98,18 @@ public class AccountController {
                         account.withdrawAmount(withdrawRequest.getAmount());
                         context.json(mapToAccountResponse(account));
                     }, () -> context.status(404));
+        }, context);
+    }
+
+    private void handle(Runnable runnable, Context context) {
+        try {
+            runnable.run();
+        } catch (IllegalStateException ex) {
+            logException(ex);
+            context.status(400).json(new ErrorResponse(ex.getMessage()));
         } catch (RuntimeException ex) {
             logException(ex);
-            context.json(new ErrorResponse(ex.getMessage()));
+            context.status(500).json(new ErrorResponse(ex.getMessage()));
         }
     }
 }
