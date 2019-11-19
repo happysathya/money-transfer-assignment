@@ -10,6 +10,9 @@ public class AccountResponse {
     private String accountHolderName;
     private BigDecimal balance;
 
+    private AccountResponse() {
+    }
+
     public AccountResponse(UUID accountId, String accountHolderName, BigDecimal balance) {
         this.accountId = accountId;
         this.accountHolderName = accountHolderName;

@@ -10,11 +10,15 @@ import static io.javalin.apibuilder.ApiBuilder.post;
 public class Application {
 
     public static void main(String[] args) {
+        Javalin app = new Application().registerRoutesAndStartApp(7000);
+        Runtime.getRuntime().addShutdownHook(new Thread(app::stop));
+    }
 
+    public Javalin registerRoutesAndStartApp(int port) {
         AccountController accountController = new AccountController();
 
         JavalinJackson.configure(JavalinJackson.getObjectMapper());
-        Javalin.create(config -> {
+        return Javalin.create(config -> {
             config.defaultContentType = "application/json";
         }).routes(() -> {
             path("accounts", () -> {
@@ -33,6 +37,6 @@ public class Application {
                     });
                 });
             });
-        }).start(7000);
+        }).start(port);
     }
 }
